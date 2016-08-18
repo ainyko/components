@@ -1,9 +1,13 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
 
-namespace MyOpaqueLayer
+namespace MyControl
 {
     /// <summary>
     /// 自定义控件:半透明控件
@@ -20,7 +24,8 @@ namespace MyOpaqueLayer
     {
         private bool _transparentBG = true;//是否使用透明
         private int _alpha = 125;//设置透明度
-        
+        Image BackImage;
+
         private System.ComponentModel.Container components = new System.ComponentModel.Container();
 
         public MyOpaqueLayer()
@@ -33,12 +38,14 @@ namespace MyOpaqueLayer
             SetStyle(System.Windows.Forms.ControlStyles.Opaque, true);
             base.CreateControl();
 
+            BackImage = new Bitmap(this.GetType(), "loading.gif");//从资源文件（嵌入到程序集）里读取图片 
             this._alpha = Alpha;
+            this.Size = new System.Drawing.Size(54, 54);
             if (IsShowLoadingImage)
             {
                 PictureBox pictureBox_Loading = new PictureBox();
                 pictureBox_Loading.BackColor = System.Drawing.Color.White;
-                pictureBox_Loading.Image = COAMDY.Properties.Resources.loading;  
+                pictureBox_Loading.Image = BackImage;
                 pictureBox_Loading.Name = "pictureBox_Loading";
                 pictureBox_Loading.Size = new System.Drawing.Size(48, 48);
                 pictureBox_Loading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -103,6 +110,30 @@ namespace MyOpaqueLayer
             }
         }
 
+
+
+        /// <summary>
+        /// 显示遮罩层
+        /// </summary>
+        /// <param name="control">填充控件</param>
+        public void ShowOpaqueLayer(Control control)
+        {
+            control.Controls.Add(this);
+            this.Dock = DockStyle.Fill;
+            this.BringToFront();
+            this.Enabled = true;
+            this.Visible = true;
+        }
+
+        /// <summary>
+        /// 隐藏遮罩层
+        /// </summary>
+        public void HideOpaqueLayer()
+        {
+            this.Visible = false;
+            this.Enabled = false;
+        }
+
         /*
          * [Category("myOpaqueLayer"), Description("是否使用透明,默认为True")]
          * 一般用于说明你自定义控件的属性（Property）。
@@ -136,6 +167,4 @@ namespace MyOpaqueLayer
             }
         }
     }
-
-
 }
